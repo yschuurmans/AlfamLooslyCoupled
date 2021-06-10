@@ -11,24 +11,35 @@ namespace Contract.Controllers
     [Route("[controller]")]
     public class ContractController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<ContractController> _logger;
-        public RabbitMQPublisher _publisher { get; set; }
+        public RabbitMQService _publisher { get; set; }
 
-        public ContractController(ILogger<ContractController> logger, RabbitMQPublisher publisher)
+        public ContractController(ILogger<ContractController> logger, RabbitMQService publisher)
         {
             _logger = logger;
             _publisher = publisher;
+
+            _publisher.RegisterConsumer<WeatherForecast>((weatherForecast) =>
+            {
+                Console.WriteLine($"Received: {weatherForecast}");
+            });
+            _publisher.RegisterConsumer<NotAWeatherForecast>((weatherForecast) =>
+            {
+                Console.WriteLine($"Received: {weatherForecast}");
+            });
         }
 
-        [HttpGet]
-        public string Get()
+        [HttpGet("WeatherForecast")]
+        public string GetWeatherForecast()
         {
-            _publisher.PublishMessage("testmessage");
+            _publisher.PublishObject(new WeatherForecast() {Date = DateTime.Now, Summary = "Does this work?", TemperatureC = 30});
+
+            return "OK";
+        }
+        [HttpGet("NotAWeatherForecast")]
+        public string GetNotAWeatherForecast()
+        {
+            _publisher.PublishObject(new NotAWeatherForecast() { Date = DateTime.Now, Summary = "Does this work?", SomethingElse = "Testing 2" });
 
             return "OK";
         }
