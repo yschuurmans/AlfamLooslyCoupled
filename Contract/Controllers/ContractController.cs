@@ -1,9 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using Contract.Commands;
+using Contract.Events;
+using Contract.Infra.Data;
+using System;
+using Contract.Mappers;
 
 namespace Contract.Controllers
 {
@@ -11,37 +15,19 @@ namespace Contract.Controllers
     [Route("[controller]")]
     public class ContractController : ControllerBase
     {
-        private readonly ILogger<ContractController> _logger;
-        public RabbitMQService _publisher { get; set; }
+        private RabbitMQService _rabbitMQService;
 
-        public ContractController(ILogger<ContractController> logger, RabbitMQService publisher)
+        public ContractController(RabbitMQService rabbitMQService)
         {
-            _logger = logger;
-            _publisher = publisher;
-
-            //_publisher.RegisterConsumer<WeatherForecast>((weatherForecast) =>
-            //{
-            //    Console.WriteLine($"Received: {weatherForecast}");
-            //});
-            //_publisher.RegisterConsumer<NotAWeatherForecast>((weatherForecast) =>
-            //{
-            //    Console.WriteLine($"Received: {weatherForecast}");
-            //});
+            _rabbitMQService = rabbitMQService;
         }
 
-        [HttpGet("WeatherForecast")]
-        public string GetWeatherForecast()
+        [HttpGet("CreateContract")]
+        public string CreateContract()
         {
-            _publisher.PublishObject(new WeatherForecast() {Date = DateTime.Now, Summary = "Does this work?", TemperatureC = 30});
+            _rabbitMQService.PublishObject(new ContractCreated(new Guid(), "12345", "Contract", "NL00IBAN01234567", 100.0));
 
-            return "OK";
-        }
-        [HttpGet("NotAWeatherForecast")]
-        public string GetNotAWeatherForecast()
-        {
-            _publisher.PublishObject(new NotAWeatherForecast() { Date = DateTime.Now, Summary = "Does this work?", SomethingElse = "Testing 2" });
-
-            return "OK";
+            return "OK"; 
         }
     }
 }

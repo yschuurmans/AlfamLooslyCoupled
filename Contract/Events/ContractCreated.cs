@@ -5,22 +5,17 @@ namespace Contract.Events
 {
     public class ContractCreated : Event
     {
-        public readonly string CustomerNumber;
-        public readonly string Firstname;
-        public readonly string Lastname;
-        public readonly string PostalCode;
-        public readonly string City;
-        public readonly string Email;
+        public readonly string ContractNumber;
+        public readonly string Type;
+        public readonly string IBAN;
+        public readonly double Budget;
 
-        public ContractCreated(Guid messageId, string customerNumber, string firstname, string lastname, string postalCode, string city, 
-            string email) : base(messageId)
+        public ContractCreated(Guid messageId, string contractNumber, string type, string iBAN, double budget) : base(messageId)
         {
-            CustomerNumber = customerNumber;
-            Firstname = firstname;
-            Lastname = lastname;
-            PostalCode = postalCode;
-            City = city;
-            Email = email;
+            ContractNumber = contractNumber;
+            Type = type;
+            IBAN = iBAN;
+            Budget = budget;
         }
     }
 }

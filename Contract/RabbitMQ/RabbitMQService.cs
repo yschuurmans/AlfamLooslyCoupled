@@ -35,8 +35,6 @@ namespace Contract
 
             _channel.ExchangeDeclare(ExchangeName, ExchangeType.Fanout);
             _channel.QueueBind(QueueName, ExchangeName, "", null);
-
-
         }
 
         public void PublishObject<T>(T message) where T : Event
