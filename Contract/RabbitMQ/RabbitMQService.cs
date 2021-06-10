@@ -66,7 +66,7 @@ namespace Contract
                     consumer.Invoke(result);
                 }
             };
-            _channel.BasicConsume(queue: "alfamlooslycoupled",
+            _channel.BasicConsume(queue: QueueName,
                                     autoAck: true,
                                     consumer: eventConsumer);
         }
