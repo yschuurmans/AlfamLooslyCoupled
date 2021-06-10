@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Customer.Infra.Data;
+using Customer.Infra.RabbitMQ;
 
 namespace Customer
 {
@@ -23,12 +24,14 @@ namespace Customer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<RabbitMQService>();
+
             var sqlConnectionString = _configuration.GetConnectionString("CustomerCN");
             services.AddDbContext<CustomerDBContext>(options => options.UseSqlServer(sqlConnectionString));
 
-            //services.UseRabbitMQMessagePublisher(_configuration);
-
             services.AddControllers();
+
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Customer", Version = "v1" });

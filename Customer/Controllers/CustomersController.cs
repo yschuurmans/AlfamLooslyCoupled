@@ -1,4 +1,3 @@
-
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Customer.Commands;
 using Customer.Events;
 using Customer.Infra.Data;
+using Customer.Infra.RabbitMQ;
 using Customer.Mappers;
 using System;
 
@@ -16,10 +16,12 @@ namespace Customer.Controllers
     public class CustomersController : ControllerBase 
     {
         private CustomerDBContext _dbContext;
+        private RabbitMQService _publisher;
 
-        public CustomersController(CustomerDBContext dbContext) 
+        public CustomersController(CustomerDBContext dbContext, RabbitMQService publisher) 
         {
             _dbContext = dbContext;
+            _publisher = publisher;
         }
 
         [HttpGet]
@@ -41,7 +43,7 @@ namespace Customer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync([FromBody] CreateCustomer command)
+        public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomer command)
         {
             try
             {
@@ -54,10 +56,10 @@ namespace Customer.Controllers
 
                     // send event
                     CustomerCreated e = command.MapToCustomerCreated();
-                    //await _messagePublisher.PublishMessageAsync(e.MessageType, e , "");
+                    _publisher.PublishObject(e);
 
                     // return result
-                    return CreatedAtRoute("GetByCustGetByCustomerNumberomerId", new { customerNumber = customer.CustomerNumber }, customer);
+                    return CreatedAtRoute("GetByCustomerNumber", new { customerNumber = customer.CustomerNumber }, customer);
                 }
                 return BadRequest();
             }
@@ -93,7 +95,7 @@ namespace Customer.Controllers
 
                     // send event
                     CustomerUpdated e = command.MapToCustomerUpdated();
-                    //await _messagePublisher.PublishMessageAsync(e.MessageType, e , "");
+                    _publisher.PublishObject(e);
 
                     // return result
                     return CreatedAtRoute("GetByCustomerNumber", new { customerNumber = customer.CustomerNumber }, customer);
