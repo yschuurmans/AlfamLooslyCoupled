@@ -19,14 +19,14 @@ namespace Contract.Controllers
             _logger = logger;
             _publisher = publisher;
 
-            _publisher.RegisterConsumer<WeatherForecast>((weatherForecast) =>
-            {
-                Console.WriteLine($"Received: {weatherForecast}");
-            });
-            _publisher.RegisterConsumer<NotAWeatherForecast>((weatherForecast) =>
-            {
-                Console.WriteLine($"Received: {weatherForecast}");
-            });
+            //_publisher.RegisterConsumer<WeatherForecast>((weatherForecast) =>
+            //{
+            //    Console.WriteLine($"Received: {weatherForecast}");
+            //});
+            //_publisher.RegisterConsumer<NotAWeatherForecast>((weatherForecast) =>
+            //{
+            //    Console.WriteLine($"Received: {weatherForecast}");
+            //});
         }
 
         [HttpGet("WeatherForecast")]
