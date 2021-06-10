@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Customer.Model
 {
     public class Customer {
@@ -7,5 +9,6 @@ namespace Customer.Model
         public string PostalCode { get; set; }
         public string City { get; set; }
         public string Email { get; set; }
+        public List<Contract> Contracts { get;set; }
     }
 }

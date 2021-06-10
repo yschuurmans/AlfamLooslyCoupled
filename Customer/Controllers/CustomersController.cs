@@ -11,6 +11,8 @@ using System;
 
 namespace Customer.Controllers 
 {
+    [ApiController]
+    [Route("[controller]")]
     public class CustomersController : ControllerBase 
     {
         private CustomerDBContext _dbContext;

@@ -10,6 +10,43 @@ services:
       - '15672:15672'
     volumes:
       - 'rabbitmq_data:/var/lib/rabbitmq'
+
+  sqlserver:
+    image: microsoft/mssql-server-linux:latest
+    container_name: sqlserver
+    volumes:
+      - sqlserverdata:/var/opt/mssql 
+    ports:
+      - "1434:1433"
+    environment:
+      - ACCEPT_EULA=Y 
+      - MSSQL_PID=Developer
+      - SA_PASSWORD=PgMqh2UsmGyh4CibMVYXepFD
+
+  customer:
+    image: customer/customer:1.0
+    build: Customer
+    depends_on:
+      - rabbitmq
+      - sqlserver
+    ports:
+      - "5100:5100"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  contract:
+    image: contract/contract:1.0
+    build: Contract
+    depends_on:
+      - rabbitmq
+      - sqlserver
+    ports:
+      - "5200:5200"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
 volumes:
   rabbitmq_data:
+    driver: local
+  sqlserverdata:
     driver: local
