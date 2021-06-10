@@ -5,15 +5,19 @@ namespace Customer.Commands
 {
     public class CreateCustomer : Command
     {
-        public readonly string CustomerNumber;
-        public readonly string Firstname;
-        public readonly string Lastname;
-        public readonly string PostalCode;
-        public readonly string City;
-        public readonly string Email;
+        public string CustomerNumber { get; set; }
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+        public string PostalCode { get; set; }
+        public string City { get; set; }
+        public string Email { get; set; }
 
-        public CreateCustomer(Guid messageId, string customerNumber, string firstname, string lastname, string postalCode, string city, 
-            string email) : base(messageId)
+        public CreateCustomer(){
+
+        }
+
+        public CreateCustomer(string customerNumber, string firstname, string lastname, string postalCode, string city, 
+            string email)
         {
             CustomerNumber = customerNumber;
             Firstname = firstname;
