@@ -1,8 +1,9 @@
+using Contract.Infra.Messaging;
 using System;
 
 namespace Contract
 {
-    public class WeatherForecast
+    public class WeatherForecast : Event
     {
         public DateTime Date { get; set; }
 

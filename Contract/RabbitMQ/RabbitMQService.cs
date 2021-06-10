@@ -1,4 +1,4 @@
-﻿using Contract.RabbitMQ;
+﻿using Contract.Infra.Messaging;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -33,21 +33,9 @@ namespace Contract
 
         }
 
-        public void PublishMessage(string message)
+        public void PublishObject<T>(T message) where T : Event
         {
-            
-            ReadOnlyMemory<byte> body = Encoding.UTF8.GetBytes(message);
-
-            _channel.BasicPublish(exchange: "",
-                                 routingKey: "alfamlooslycoupled",
-                                 basicProperties: null,
-                                 body: body);
-        }
-
-        public void PublishObject<T>(T message)
-        {
-            var rabbitMessage = new RabbitMQMessage<T>(message.GetType(), message);
-            string jsonMessage = JsonConvert.SerializeObject(rabbitMessage);
+            string jsonMessage = JsonConvert.SerializeObject(message);
             ReadOnlyMemory<byte> body = Encoding.UTF8.GetBytes(jsonMessage);
 
             _channel.BasicPublish(exchange: "",
@@ -56,7 +44,7 @@ namespace Contract
                                  body: body);
         }
 
-        public void RegisterConsumer<T>(Action<T> consumer)
+        public void RegisterConsumer<T>(Action<T> consumer) where T : Event
         {
             var eventConsumer = new EventingBasicConsumer(_channel);
             eventConsumer.Received += (model, ea) =>
@@ -65,11 +53,11 @@ namespace Contract
                 byte[] bytes = new byte[ea.Body.Length];
                 body.CopyTo(bytes);
                 var message = Encoding.UTF8.GetString(bytes);
-                RabbitMQMessage<T> result = JsonConvert.DeserializeObject<RabbitMQMessage<T>>(message);
-                if(result.OriginalType.Name == typeof(T).Name)
+                T result = JsonConvert.DeserializeObject<T>(message);
+                if(result.MessageType == typeof(T).Name)
                 {
                     Console.WriteLine(" [x] Received from Rabbit: {0}", message);
-                    consumer.Invoke(result.Content);
+                    consumer.Invoke(result);
                 }
             };
             _channel.BasicConsume(queue: "alfamlooslycoupled",
