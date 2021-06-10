@@ -34,16 +34,16 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
 
-  contract:
-    image: contract/contract:1.0
-    build: Contract
-    depends_on:
-      - rabbitmq
-      - sqlserver
-    ports:
-      - "5200:5200"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+  # contract:
+  #   image: contract/contract:1.0
+  #   build: Contract
+  #   depends_on:
+  #     - rabbitmq
+  #     - sqlserver
+  #   ports:
+  #     - "5200:5200"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
 
 volumes:
   rabbitmq_data:

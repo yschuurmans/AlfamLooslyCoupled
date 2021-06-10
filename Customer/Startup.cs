@@ -55,6 +55,11 @@ namespace Customer
             {
                 endpoints.MapControllers();
             });
+
+            using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetService<CustomerDBContext>().MigrateDB();
+            }
         }
     }
 }
