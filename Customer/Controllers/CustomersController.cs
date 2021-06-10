@@ -22,14 +22,15 @@ namespace Customer.Controllers
             _dbContext = dbContext;
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
             return Ok(await _dbContext.Customers.ToListAsync());
         }
 
         [HttpGet]
-        [Route("{customerId}", Name = "GetByCustomerId")]
-        public async Task<IActionResult> GetByCustomerId(string customerNumber)
+        [Route("{customerNumber}", Name = "GetByCustomerNumber")]
+        public async Task<IActionResult> GetByCustomerNumber(string customerNumber)
         {
             var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNumber == customerNumber);
             if (customer == null)
@@ -56,7 +57,7 @@ namespace Customer.Controllers
                     //await _messagePublisher.PublishMessageAsync(e.MessageType, e , "");
 
                     // return result
-                    return CreatedAtRoute("GetByCustomerId", new { customerNumber = customer.CustomerNumber }, customer);
+                    return CreatedAtRoute("GetByCustGetByCustomerNumberomerId", new { customerNumber = customer.CustomerNumber }, customer);
                 }
                 return BadRequest();
             }
@@ -73,13 +74,21 @@ namespace Customer.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateAsync([FromBody] UpdateCustomer command)
         {
+            Model.Customer customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerNumber == command.CustomerNumber);
+            if (customer == null)
+            {
+                return NotFound();
+            }
             try
             {
                 if (ModelState.IsValid)
                 {
-                    // insert customer
-                    Model.Customer customer = command.MapToCustomer();
-                    _dbContext.Customers.Add(customer);
+                    // update customer
+                    customer.Firstname = command.Firstname;
+                    customer.Lastname = command.Lastname;
+                    customer.PostalCode = command.PostalCode;
+                    customer.City = command.City;
+                    customer.Email = command.Email;
                     await _dbContext.SaveChangesAsync();
 
                     // send event
@@ -87,7 +96,7 @@ namespace Customer.Controllers
                     //await _messagePublisher.PublishMessageAsync(e.MessageType, e , "");
 
                     // return result
-                    return CreatedAtRoute("GetByCustomerId", new { customerNumber = customer.CustomerNumber }, customer);
+                    return CreatedAtRoute("GetByCustomerNumber", new { customerNumber = customer.CustomerNumber }, customer);
                 }
                 return BadRequest();
             }
