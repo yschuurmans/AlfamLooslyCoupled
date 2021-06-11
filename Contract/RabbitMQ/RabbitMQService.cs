@@ -22,7 +22,7 @@ namespace Contract
             Task.Delay(1000).Wait();
             Console.WriteLine("Consuming Queue Now");
 
-            ConnectionFactory factory = new ConnectionFactory() { HostName = "localhost", Port = 5672 }; // rabbitmqlooslycoupled.westeurope.azurecontainer.io on azure
+            ConnectionFactory factory = new ConnectionFactory() { HostName = "rabbitmq", Port = 5672 }; // rabbitmqlooslycoupled.westeurope.azurecontainer.io on azure
             factory.UserName = "guest";
             factory.Password = "guest"; //n0m3ymXVqLLfLRLo on azure
             _conn = factory.CreateConnection();

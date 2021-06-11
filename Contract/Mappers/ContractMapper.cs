@@ -12,7 +12,8 @@ namespace Contract.Mappers
             command.ContractNumber,
             command.Type,
             command.IBAN,
-            command.Budget
+            command.Budget,
+            ""
         );
 
         public static ContractUpdated MapToContractUpdated(this UpdateContract command) => new ContractUpdated
