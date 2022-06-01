@@ -25,9 +25,11 @@ namespace Contract.Controllers
         [HttpGet("CreateContract")]
         public string CreateContract()
         {
+            Console.WriteLine("Creating new contract!");
+
             _rabbitMQService.PublishObject(new ContractCreated(new Guid(), "12345", "Contract", "NL00IBAN01234567", 100.0));
 
-            return "OK"; 
+            return "OK";
         }
     }
 }

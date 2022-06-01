@@ -1,4 +1,4 @@
-﻿using Contract.Infra.Messaging;
+﻿using Customer.Infra.Messaging;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -8,12 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contract
+namespace Customer
 {
     public class RabbitMQService
     {
         readonly string ExchangeName = "alfam.fanout";
-        readonly string QueueName = "alfam-contract";
+        readonly string QueueName = "alfam-customer";
 
         public IConnection _conn { get; set; }
         public IModel _channel{ get; set; }
@@ -60,7 +60,7 @@ namespace Contract
                 T result = JsonConvert.DeserializeObject<T>(message);
                 if(result.MessageType == typeof(T).Name)
                 {
-                    Console.WriteLine(" [x] Received from Rabbit: {0}", message);
+                    //Console.WriteLine(" [x] Received from Rabbit: {0}", message);
                     consumer.Invoke(result);
                 }
             };
